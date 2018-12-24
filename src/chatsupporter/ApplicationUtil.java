@@ -16,7 +16,7 @@ public class ApplicationUtil {
 
   private static final int MAJOR_VERSION = 1;
   private static final int MINOR_VERSION = 0;
-  private static final int BUILD_VERSION = 0;
+  private static final int BUILD_VERSION = 1;
 
   private static final long MILLI_TO_NANO = 1000000;
   private static final long SECOND_TO_MILLI = 1000;
