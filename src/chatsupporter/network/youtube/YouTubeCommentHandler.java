@@ -231,14 +231,14 @@ public class YouTubeCommentHandler extends CommentHandler {
     try {
       CommentModel comment = new CommentModel();
       JSONObject authorName = (JSONObject)liveChatText.get("authorName");
-      comment.setAuthorName((String)authorName.get("simpleText"));
+      comment.setAuthorName(parseAuthorName(authorName));
       String url = parseUrlString(liveChatText);
       if (url != null) {
         comment.setAuthorPhotoUrl(url);
       }
       comment.setAuthorChannelId((String)liveChatText.get("authorExternalChannelId"));
       JSONObject message = (JSONObject)liveChatText.get("message");
-      comment.setMessage((String)message.get("simpleText"));
+      comment.setMessage(parseMessage(message));
       CommentModel.AuthorType[] authorTypes = parseAuthorTypes(liveChatText);
       if (authorTypes != null && authorTypes.length > 0) {
         comment.setAuthorTypes(authorTypes);
@@ -247,6 +247,52 @@ public class YouTubeCommentHandler extends CommentHandler {
     } catch (Exception e) {
       return null;
     }
+  }
+
+  /**
+   * 作者名を取り出します。.
+   * @param authorName 作者名のオブジェクト
+   * @return 取り出した名前（失敗したらnull）
+   */
+  private String parseAuthorName(JSONObject authorName) {
+    String text = (String)authorName.get("simpleText");
+    if (text != null) {
+      return text;
+    }
+    JSONArray runs = (JSONArray)authorName.get("runs");
+    @SuppressWarnings("unchecked")
+    Iterator<JSONObject> itr = runs.iterator();
+    while (itr.hasNext()) {
+      JSONObject run = itr.next();
+      text = (String)run.get("text");
+      if (text != null) {
+        return text;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * コメントを取り出します。.
+   * @param message コメントのオブジェクト
+   * @return 取り出したコメント失敗したらnull）
+   */
+  private String parseMessage(JSONObject message) {
+    String text = (String)message.get("simpleText");
+    if (text != null) {
+      return text;
+    }
+    JSONArray runs = (JSONArray)message.get("runs");
+    @SuppressWarnings("unchecked")
+    Iterator<JSONObject> itr = runs.iterator();
+    while (itr.hasNext()) {
+      JSONObject run = itr.next();
+      text = (String)run.get("text");
+      if (text != null) {
+        return text;
+      }
+    }
+    return null;
   }
 
   /**
